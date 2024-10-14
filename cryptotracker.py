@@ -2,7 +2,7 @@ from tkinter import *
 from PIL import ImageTk, Image
 import requests
 
-# Colors na ginamit
+# Colors
 co1 = "white"
 co2 = "#d4ac0d"
 co3 = "#000000"
@@ -13,16 +13,14 @@ window.geometry("320x800")
 window.configure(bg=co1)
 
 def fetch_price():
-    api_link = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd,php,cad,eur" #api ng coingecko mas stable
+    api_link = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd,php,cad,eur"
     
     try:
         res = requests.get(api_link)
-        res.raise_for_status()  #raise ng error para sa bad response
-        dic = res.json()#naka json kasi ang data kaya may .json
+        res.raise_for_status()  # Raise an error for bad respons3es
+        dic = res.json()
 
-        # ito extract values
-        #kung nag tataka kayo bat may {:,.3f} ewan ko kay google ganyan daw para lumabas yung decimals
-        
+        # Extract values
         usd_value = dic['bitcoin']['usd']
         usd_formatted_value = "${:,.3f}".format(usd_value)
         usd["text"] = usd_formatted_value
@@ -40,25 +38,25 @@ def fetch_price():
         euro["text"] = eur_formatted_value
 
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching price data: {e}")  #ito error handling pag na reach na yung rate limit
+        print(f"Error fetching price data: {e}")  
 
-    frame_body.after(40000, fetch_price)  # mag rerefresh yung body ng UI kada 40 seconds
+    frame_body.after(40000, fetch_price)  # Refresh every 15 seconds
 
 def fetch_news():
-    news_api_key = "ed527df85fbd73c4f798279978a3201df3d1a346"  #api key galing sa crypto panic
-    api_link = f"https://cryptopanic.com/api/v1/posts/?auth_token={news_api_key}&currencies=BTC" 
+    news_api_key = "ed527df85fbd73c4f798279978a3201df3d1a346"  
+    api_link = f"https://cryptopanic.com/api/v1/posts/?auth_token={news_api_key}&currencies=BTC"
 
     try:
         res = requests.get(api_link)
-        res.raise_for_status()  #same lang din to sa fetch price tignan nyo nalang don
+        res.raise_for_status()  # Raise an error for bad responses
         news_data = res.json()
 
-        # Clear previous news pag nag lipat
+        # Clear previous news
         for widget in news_1.winfo_children():
-            widget.destroy()#para hindi na lumabas yung btc news pag nilipat sa solana
+            widget.destroy()
 
-        # Display ng kahit ilang news pero trip ko tatlo eh
-        for item in news_data['results'][:3]:  
+        # Display only the top 5 news items
+        for item in news_data['results'][:5]:  
             title = item['title']
             title_label = Label(news_1, text=title, bg=co2, fg=co3, wraplength=280, justify="left", font=("Lato 12"))
             title_label.pack(pady=5)
@@ -66,14 +64,14 @@ def fetch_news():
     except requests.exceptions.RequestException as e:
         print(f"Error fetching news: {e}")  
 
-    news_1.after(120000, fetch_news)  # Refresh every 2 minuts pero gagawin kong 5 mins yan sa next version para maiwasan din natin ma hit yung rate limit
-                                      # kasi isa lamang tayong hamak na hampas lupa walang pambili ng api na mataas rate limit
+    news_1.after(100000, fetch_news)  # Refresh every minute
+ 
 
-# Frame and Label setup #alam nyo na to guys
+# Frame and Label setup 
 frame_head = Frame(window, width=320, height=50, bg=co1)
 frame_head.grid(row=1, column=0)
 
-frame_body = Frame(window, width=320, height=700, bg=co2) 
+frame_body = Frame(window, width=320, height=700, bg=co2)  # Adjusted height for news
 frame_body.grid(row=2, column=0)
 
 image_1 = Image.open('images/bitcoin.png')
