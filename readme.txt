@@ -1,4 +1,4 @@
-Crypto Tracker Documentation
+# Crypto Tracker Documentation
 Overview
 Crypto Tracker is a Python-based desktop application developed using Tkinter. It allows users to track cryptocurrency prices, analyze historical trends, and view sentiment from news articles related to specific cryptocurrencies.
 
